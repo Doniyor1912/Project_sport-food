@@ -1,4 +1,4 @@
-from drf_spectacular.utils import extend_schema_view, extend_schema
+from drf_spectacular.utils import extend_schema
 from rest_framework import status, generics
 from django.contrib.auth import login
 
@@ -6,9 +6,7 @@ from .serializers import RegisterSerializer, LoginSerializer, LogoutSerializer
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 
-@extend_schema_view(
-    create=extend_schema(summary='Users register', tags=['Users']),
-)
+@extend_schema(summary='Create Register Users', tags=['Users'])
 class RegisterView(generics.CreateAPIView):
     serializer_class = RegisterSerializer
 
@@ -22,9 +20,7 @@ class RegisterView(generics.CreateAPIView):
 
 
 
-@extend_schema_view(
-    create=extend_schema(summary='Users login', tags=['Users']),
-)
+@extend_schema(summary='Create user login', tags=['Users'])
 class LoginView(generics.CreateAPIView):
     serializer_class = LoginSerializer
 
@@ -39,24 +35,13 @@ class LoginView(generics.CreateAPIView):
 
 
 
-@extend_schema_view(
-    create=extend_schema(summary='Users logout', tags=['Users']),
-)
-class LogoutView(generics.DestroyAPIView):
+@extend_schema(summary=' Create user logout', tags=['Users'])
+
+class LogoutView(generics.CreateAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = LogoutSerializer
 
-    def destroy(self, request, *args, **kwargs):
+    def create(self, request, *args, **kwargs):
         if hasattr(request.user, 'auth_token'):
             request.user.auth_token.delete()
         return Response({"message": "Successfully logged out."}, status=status.HTTP_200_OK)
-
-
-
-# class LogoutView(generics.CreateAPIView):
-#     permission_classes = [IsAuthenticated]
-#
-#     def create(self, request, *args, **kwargs):
-#         if hasattr(request.user, 'auth_token'):
-#             request.user.auth_token.delete()
-#         return Response({"message": "Successfully logged out."}, status=status.HTTP_200_OK)

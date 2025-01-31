@@ -1,5 +1,5 @@
 from datetime import timedelta
-
+from django.utils.translation import gettext_lazy as _
 import environ
 import os
 
@@ -33,21 +33,47 @@ INSTALLED_APPS += [
     'djoser',
     'rest_framework_simplejwt',
     'rest_framework.authtoken',
+    'modeltranslation',
+    'storages',
 ]
 
 INSTALLED_APPS += [
     'api',
     'common',
-    'users'
+    'users',
+    'FAQ',
+    'product',
+    'imageproxy',
 ]
 
 INSTALLED_APPS += ['corsheaders', ]
+
+
+
+MINIO_STORAGE_ENDPOINT = env.str("MINIO_STORAGE_ENDPOINT", "")
+MINIO_STORAGE_ACCESS_KEY = env.str("MINIO_STORAGE_ACCESS_KEY", "")
+MINIO_STORAGE_SECRET_KEY = env.str("MINIO_STORAGE_SECRET_KEY", "")
+MINIO_STORAGE_USE_HTTPS = env.bool("MINIO_STORAGE_USE_HTTPS", False)
+MINIO_STORAGE_MEDIA_BUCKET_NAME = env.str("MINIO_STORAGE_MEDIA_BUCKET_NAME", "")
+MINIO_STORAGE_AUTO_CREATE_MEDIA_BUCKET = env.bool("MINIO_STORAGE_AUTO_CREATE_MEDIA_BUCKET", False)
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+AWS_S3_ENDPOINT_URL = MINIO_STORAGE_ENDPOINT
+AWS_ACCESS_KEY_ID = MINIO_STORAGE_ACCESS_KEY
+AWS_SECRET_ACCESS_KEY = MINIO_STORAGE_SECRET_KEY
+AWS_S3_USE_SSL = MINIO_STORAGE_USE_HTTPS
+AWS_STORAGE_BUCKET_NAME = MINIO_STORAGE_MEDIA_BUCKET_NAME
+AWS_QUERYSTRING_AUTH = False
+
+
+
+
 
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -139,6 +165,7 @@ SPECTACULAR_SETTINGS = {
 
 
 
+
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -155,13 +182,20 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
-
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'en'
 TIME_ZONE = 'UTC'
 USE_I18N = True
 USE_L10N = True
 USE_TZ = True
+
+MODELTRANSLATION_DEFAULT_LANGUAGE = 'en'
+
+LANGUAGES = [
+   ('uz', _('Uzbek')),
+   ('en', _('English')),
+   ('ru', _('Russian')),
+]
+
 
 
 STATIC_URL = '/static/'
